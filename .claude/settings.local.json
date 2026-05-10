@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"console.log\\(Date.now\\(\\)\\)\")",
+      "Bash(git --version)",
+      "Bash(git config *)",
+      "Bash(gh auth *)",
+      "Bash(gh --version)",
+      "Bash(winget --version)",
+      "Bash(curl --version)",
+      "Bash(where gh *)",
+      "Read(//d/claude code project/**)",
+      "Bash(curl -L -o gh-installer.zip \"https://github.com/cli/cli/releases/download/v2.63.2/gh_2.63.2_windows_amd64.zip\")",
+      "Bash(unzip -o gh-installer.zip -d gh-cli)",
+      "Bash(gh-cli/bin/gh.exe auth *)",
+      "Bash(D:/claude code project/gh-cli/bin/gh.exe auth *)",
+      "Bash(git init *)",
+      "Bash(\"D:/claude code *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}

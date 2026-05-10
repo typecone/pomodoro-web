@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>25:00 · 番茄钟</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🍅%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand">🍅 番茄钟</h1>
+    <nav class="nav">
+      <button class="nav-btn" data-open="stats">统计</button>
+      <button class="nav-btn" data-open="settings">设置</button>
+    </nav>
+  </header>
+
+  <main class="main">
+    <section class="timer-card">
+      <div class="phase-tabs" role="tablist">
+        <button class="phase-tab active" data-phase="focus">专注</button>
+        <button class="phase-tab" data-phase="shortBreak">短休息</button>
+        <button class="phase-tab" data-phase="longBreak">长休息</button>
+      </div>
+
+      <div class="time-display" id="time-display">25:00</div>
+      <div class="phase-hint" id="phase-hint">准备开始一个番茄</div>
+
+      <div class="controls">
+        <button id="btn-start" class="btn btn-primary">开始</button>
+        <button id="btn-skip" class="btn">跳过</button>
+        <button id="btn-reset" class="btn">重置</button>
+      </div>
+
+      <div class="today-summary">
+        <span class="today-label">今日番茄</span>
+        <span id="today-count" class="today-count">0</span>
+        <span id="today-tomatoes" class="today-tomatoes"></span>
+      </div>
+    </section>
+
+    <section class="tasks-card">
+      <div class="tasks-header">
+        <h2>任务</h2>
+        <span class="tasks-hint">勾选当前正在做的任务，每完成一个番茄会自动累加</span>
+      </div>
+      <ul class="task-list" id="task-list"></ul>
+      <form class="task-form" id="task-form">
+        <input
+          type="text"
+          id="task-input"
+          placeholder="添加新任务，回车确认"
+          maxlength="60"
+          autocomplete="off"
+        />
+        <input
+          type="number"
+          id="task-estimate"
+          min="1"
+          max="20"
+          value="1"
+          title="预计番茄数"
+        />
+        <button type="submit" class="btn btn-primary">添加</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- 设置抽屉 -->
+  <aside class="drawer" id="drawer-settings" hidden>
+    <div class="drawer-header">
+      <h2>设置</h2>
+      <button class="drawer-close" data-close>×</button>
+    </div>
+    <div class="drawer-body">
+      <div class="form-row">
+        <label for="set-focus">专注时长（分钟）</label>
+        <input type="number" id="set-focus" min="1" max="120" />
+      </div>
+      <div class="form-row">
+        <label for="set-short">短休息时长（分钟）</label>
+        <input type="number" id="set-short" min="1" max="60" />
+      </div>
+      <div class="form-row">
+        <label for="set-long">长休息时长（分钟）</label>
+        <input type="number" id="set-long" min="1" max="120" />
+      </div>
+      <div class="form-row">
+        <label for="set-long-every">每几个番茄长休息一次</label>
+        <input type="number" id="set-long-every" min="2" max="10" />
+      </div>
+      <div class="form-row form-row-toggle">
+        <label for="set-auto">自动开始下一阶段</label>
+        <input type="checkbox" id="set-auto" />
+      </div>
+      <div class="form-row form-row-toggle">
+        <label for="set-sound">声音提醒</label>
+        <input type="checkbox" id="set-sound" />
+      </div>
+      <div class="form-row form-row-toggle">
+        <label for="set-notify">桌面通知</label>
+        <input type="checkbox" id="set-notify" />
+      </div>
+      <div class="form-row form-row-toggle">
+        <label for="set-theme">暗色主题</label>
+        <input type="checkbox" id="set-theme" />
+      </div>
+      <div class="drawer-actions">
+        <button id="btn-export" class="btn">导出数据</button>
+        <button id="btn-import" class="btn">导入数据</button>
+        <input type="file" id="file-import" accept="application/json" hidden />
+      </div>
+      <p class="form-tip">数据全部保存在浏览器本地，清空浏览器数据会丢失。</p>
+    </div>
+  </aside>
+
+  <!-- 统计抽屉 -->
+  <aside class="drawer drawer-wide" id="drawer-stats" hidden>
+    <div class="drawer-header">
+      <h2>专注统计</h2>
+      <button class="drawer-close" data-close>×</button>
+    </div>
+    <div class="drawer-body">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">今日番茄</div>
+          <div class="stat-value" id="stat-today-count">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">今日专注</div>
+          <div class="stat-value" id="stat-today-min">0 分</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">本周番茄</div>
+          <div class="stat-value" id="stat-week-count">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">累计番茄</div>
+          <div class="stat-value" id="stat-total-count">0</div>
+        </div>
+      </div>
+      <h3 class="stats-section-title">近 7 天专注分钟数</h3>
+      <div class="chart-wrap"><canvas id="chart-week"></canvas></div>
+      <h3 class="stats-section-title">近 30 天专注趋势</h3>
+      <div class="chart-wrap"><canvas id="chart-month"></canvas></div>
+    </div>
+  </aside>
+
+  <div class="overlay" id="overlay" hidden></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Git
+.git/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+
+# gh-cli (if downloaded for auth)
+gh-cli/
