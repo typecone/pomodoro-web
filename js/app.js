@@ -243,6 +243,7 @@ const Timer = {
     this.remainingMs = this.duration;
     this.isRunning = false;
     this.stop();
+    document.documentElement.setAttribute('data-phase', phase);
     this.updateDisplay();
     this.saveState();
   },
@@ -324,6 +325,7 @@ const Timer = {
     const nextPhase = this.getNextPhase();
     this.currentPhase = nextPhase;
     this.remainingMs = this.duration;
+    document.documentElement.setAttribute('data-phase', nextPhase);
     this.updateDisplay();
 
     const settings = STORAGE.settings;
@@ -397,6 +399,8 @@ const Timer = {
       this.currentPhase = state.currentPhase;
       this.remainingMs = state.remainingMs;
       this.completedPomodoros = state.completedPomodoros || 0;
+
+      document.documentElement.setAttribute('data-phase', this.currentPhase);
 
       if (state.isRunning && state.endsAt > Date.now()) {
         this.endsAt = state.endsAt;
